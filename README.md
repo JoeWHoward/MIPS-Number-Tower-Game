@@ -5,12 +5,19 @@ This is a semester project for CS 3340 with Nhut Nguyen at University of Texas a
 At the end of the semester, EACH student must submit a ZIP file containing
 
 1. A project report (in Word format) covering
+
     a) a description of the program,
+    
     b) the challenges that you and your team had  and how did you or the team overcome them,
+    
     c) what you have learned by doing the project,
+    
     d) a discussion of algorithms and techniques used in the program,
+    
     e) contributions of each team member (peer evaluation), 
+    
     f) any suggestions you may have (optional).
+    
 
 2. A short video clip demonstrating the program in action. (If the video is too big you can post it on a website, e.g. youTube, and submit the link). The video should have audio narration explaining the behavior of your program.
 
