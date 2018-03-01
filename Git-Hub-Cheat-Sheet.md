@@ -6,7 +6,10 @@ leadingpath: ../../
 ---
 
 {% capture colOne %}
-##https://try.github.io/levels/1/challenges/1 Do this if you don't wanna read all of this
+
+
+
+# https://try.github.io/levels/1/challenges/1 Do this if you don't wanna read all of this
 
 ## Install Git
 GitHub provides desktop clients that include a graphical user interface for the most common repository actions and an automatically updating command line edition of Git for advanced scenarios.
