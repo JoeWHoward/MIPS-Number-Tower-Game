@@ -5,6 +5,7 @@
 2. Number comparison
   * Accessing the random array and comparing it with the values input by the user
 3. Displaying the board to the user
+  * Spacing function to create appropriate spacing based on what row is being printed
   * At first I was thinking we would use a bitmap display, this seems like too much of a challenge, we should figure out a good way to display the info to the user through the console, including where their cursor is (maybe through ascii symbols?)
 4. Displaying cursor to the user
 
