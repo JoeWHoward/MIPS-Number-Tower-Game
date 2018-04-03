@@ -1,6 +1,6 @@
 # To-Do List
 ### **Program Functionality**
-1. Random number generation
+1. Random number generation (Andrew)
   * And storing those numbers into a 2-dimensional array (more thoughts on this appreciated)
 2. Number comparison
   * Accessing the random array and comparing it with the values input by the user
