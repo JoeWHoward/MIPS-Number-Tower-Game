@@ -1,6 +1,7 @@
 .data
 # Create a string to separate the 28 numbers with a space
 numberArray: .word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+symbolArray: .word 0, 0, 0, 0, 0, 0, 0
 space: .asciiz " "
 bar: .asciiz "|"
 nA: .asciiz "!"
@@ -10,7 +11,12 @@ nD: .asciiz "$"
 nE: .asciiz "%"
 nF: .asciiz "&"
 nG: .asciiz "*"
-endline: .ascii "\n"
+userString: .asciiz
+userInt: .word 0
+endline: .asciiz "\n"
+
+playPrompt: .asciiz "Please enter the symbol of the block you would like to guess: "
+playPrompt2: .asciiz "\nPlease enter the number you would like to guess: "
 
 .text
 ##############################################################################
@@ -34,7 +40,7 @@ endline: .ascii "\n"
 #############################
 
 
-# generate 10 random integers in the range 100 from the 
+# generate 7 random integers in the range 100 from the 
 # seeded generator (whose id is 1)
 	li	$t2, 8		# max number of iterations + 1
 	li	$t3, 0		# current iteration number
@@ -61,6 +67,7 @@ LOOP:
 	j	LOOP
 
 EXIT:
+	j play
 	li	$v0, 10		# exit syscall
 	syscall
 start:
@@ -164,7 +171,7 @@ line:
 	
 	addi $t8, $t8, 1 # Increment max_counter
 	li $t9, -1 # Reset counter
-	beq $t8, 7, EXIT # If max counter = 6, exit
+	beq $t8, 7, play # If max counter = 6, exit
 	j print
 	
 preSpacing:		 # Sets up registers to be used in spacing
@@ -206,54 +213,152 @@ frontSpacingLoop:
 	j frontSpacingLoop # loop
 
 numA:
-	li $v0, 4
-	la $a0, nA
+	la $t0, symbolArray # Store symbol array (Which holds values 0 or 1 based on if the number has been guessed yet)
+	lw $t0, 0($t0) # Attempt to load the first word from the symbolArray
+	li $t1, 1  # Set $t1 = 1
+	beq $t0, $t1, next # Branch if equal 
+	
+	li $v0, 4 # Get ready to print 
+	la $a0, nA # Print the hidden character
 	syscall
 	
 	j numSpacing
 	
 numB:
+	la $t0, symbolArray
+	addi $t0, $t0, 4
+	lw $t0, 0($t0)
+	li $t1, 1
+	beq $t0, $t1, next
+
 	li $v0, 4
 	la $a0, nB
 	syscall
 	
 	j numSpacing
 numC:
+	la $t0, symbolArray
+	addi $t0, $t0, 8
+	lw $t0, 0($t0)
+	li $t1, 1
+	beq $t0, $t1, next
+	
 	li $v0, 4
 	la $a0, nC
 	syscall
 	
 	j numSpacing
 numD:
+	la $t0, symbolArray
+	addi $t0, $t0, 12
+	lw $t0, 0($t0)
+	li $t1, 1
+	beq $t0, $t1, next
+	
 	li $v0, 4
 	la $a0, nD
 	syscall
 	
 	j numSpacing
 numE:
+	la $t0, symbolArray
+	addi $t0, $t0, 16
+	lw $t0, 0($t0)
+	li $t1, 1
+	beq $t0, $t1, next
+	
 	li $v0, 4
 	la $a0, nE
 	syscall
 	
 	j numSpacing
 numF:
+	la $t0, symbolArray
+	addi $t0, $t0, 20
+	lw $t0, 0($t0)
+	li $t1, 1
+	beq $t0, $t1, next
+	
 	li $v0, 4
 	la $a0, nF
 	syscall
 	
 	j numSpacing
 numG:
+	la $t0, symbolArray
+	addi $t0, $t0, 24
+	lw $t0, 0($t0)
+	li $t1, 1
+	beq $t0, $t1, next
+	
 	li $v0, 4
 	la $a0, nG
 	syscall
 	
 	j numSpacing
 	
-numSpacing:
-	li $v0, 4
+numSpacing: 	# Spacing function for non-integers (all the symbols)
+	li $v0, 4 # Print string
 	la $a0, space
 	syscall
 	syscall
 	syscall
 	
 	j spaceReturn
+
+play:		# Main play function, this is what drives user input
+	li $t6, 0 # Reset $t6
+	li $v0, 4 # Print prompt
+	la $a0, playPrompt
+	syscall
+
+	li $v0, 12 # Read character from user
+	syscall
+	
+	sw $v0, userString # Store character in userString variable
+	
+	lb $s6, userString # Load byte from userString
+	
+	li $v0, 4 # Print
+	la $a0, playPrompt2
+	syscall
+	
+	li $v0, 5 # Read integer
+	syscall
+	
+	sw $v0, userInt # Store integer in userInt
+	
+	lb $a0, nA # Load the character into $a0
+	li $a1, 0 # Set $a1 to 0
+	beq $a0, $s6, update # If $a0 and $s6 are equal, go to update
+	lb $a0, nB
+	li $a1, 1
+	beq $a0, $s6, update
+	lb $a0, nC
+	li $a1, 2
+	beq $a0, $s6, update
+	lb $a0, nD
+	li $a1, 3
+	beq $a0, $s6, update
+	lb $a0, nE
+	li $a1, 4
+	beq $a0, $s6, update
+	lb $a0, nF
+	li $a1, 5
+	beq $a0, $s6, update
+	lb $a0, nG
+	li $a1, 6
+	beq $a0, $s6, update
+	
+
+
+update:
+	
+
+	la $t0, symbolArray # Get address of symbol array
+	sll $a1, $a1, 2 # Multiply $a1 (index) by 4
+	add $t0, $t0, $a1 # Add 'em
+	li $t1, 1 # Set $t1 to 1
+	sw $t1, 0($t0) # Store in the symbolArray as having been hit by the user
+	
+	j prePrint
