@@ -2,7 +2,16 @@
 # Create a string to separate the 28 numbers with a space
 numberArray: .word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 space: .asciiz " "
+bar: .asciiz "|"
+nA: .asciiz "!"
+nB: .asciiz "#"
+nC: .asciiz "@"
+nD: .asciiz "$"
+nE: .asciiz "%"
+nF: .asciiz "&"
+nG: .asciiz "*"
 endline: .ascii "\n"
+
 .text
 ##############################################################################
 # Don't touch the code from HERE
@@ -118,25 +127,32 @@ prePrint:
 	li $t8, 0 # set max counter to 0
 	la $t4, numberArray # load base array address
 	addi $t4, $t4, 108 # Set it to the last element in the array (array[28])
-	
-	
+	li $t6, 0
 print:
 	j frontSpacing
+	
 fspaceReturn:
+	addi $t6, $t6, 1
 	addi $t9, $t9, 1 # Increment counter
+	
+	beq $t6, 2, numA
+	beq $t6, 5, numB
+	beq $t6, 9, numC 
+	beq $t6, 13, numD
+	beq $t6, 18, numE
+	beq $t6, 22, numF
+	beq $t6, 26, numG
+	
+next:
 
 	li $v0, 1 # Get ready to print integer
 	lw $a0, 0($t4) # print integer
 	syscall
-	
-	j preSpacing
-spaceReturn:
-	
-	beq $t9, $t8, skip
-	
-	
+
 skip:
+	j preSpacing
 	
+spaceReturn:
 	subi $t4, $t4, 4 # Subtract 4 from index to move backwards one to array[i-4]
 	bne $t9, $t8, fspaceReturn  # If counter doesnt = max counter, loop
 	j line # else, print a new line
@@ -188,3 +204,56 @@ frontSpacingLoop:
 	subi $t3, $t3, 1 # Subtract 1 from $t3
 	beq $t3, 0, fspaceReturn # When $t3 hits 0, all spaces are printed, return
 	j frontSpacingLoop # loop
+
+numA:
+	li $v0, 4
+	la $a0, nA
+	syscall
+	
+	j numSpacing
+	
+numB:
+	li $v0, 4
+	la $a0, nB
+	syscall
+	
+	j numSpacing
+numC:
+	li $v0, 4
+	la $a0, nC
+	syscall
+	
+	j numSpacing
+numD:
+	li $v0, 4
+	la $a0, nD
+	syscall
+	
+	j numSpacing
+numE:
+	li $v0, 4
+	la $a0, nE
+	syscall
+	
+	j numSpacing
+numF:
+	li $v0, 4
+	la $a0, nF
+	syscall
+	
+	j numSpacing
+numG:
+	li $v0, 4
+	la $a0, nG
+	syscall
+	
+	j numSpacing
+	
+numSpacing:
+	li $v0, 4
+	la $a0, space
+	syscall
+	syscall
+	syscall
+	
+	j spaceReturn
