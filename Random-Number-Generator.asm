@@ -1,7 +1,7 @@
 .data
 # Create a string to separate the 28 numbers with a space
 numberArray: .word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-space: .asciiz "  "
+space: .asciiz " "
 endline: .ascii "\n"
 .text
 ##############################################################################
@@ -119,19 +119,26 @@ prePrint:
 	la $t4, numberArray # load base array address
 	addi $t4, $t4, 108 # Set it to the last element in the array (array[28])
 	
+	
 print:
+	j frontSpacing
+fspaceReturn:
 	addi $t9, $t9, 1 # Increment counter
 
 	li $v0, 1 # Get ready to print integer
 	lw $a0, 0($t4) # print integer
 	syscall
 	
-	li $v0, 4 # Get ready to print string
-	la $a0, space # Print it
-	syscall
+	j preSpacing
+spaceReturn:
+	
+	beq $t9, $t8, skip
+	
+	
+skip:
 	
 	subi $t4, $t4, 4 # Subtract 4 from index to move backwards one to array[i-4]
-	bne $t9, $t8, print  # If counter doesnt = max counter, loop
+	bne $t9, $t8, fspaceReturn  # If counter doesnt = max counter, loop
 	j line # else, print a new line
 
 line:
@@ -141,7 +148,43 @@ line:
 	
 	addi $t8, $t8, 1 # Increment max_counter
 	li $t9, -1 # Reset counter
-	beq $t8, 6, EXIT # If max counter = 6, exit
+	beq $t8, 7, EXIT # If max counter = 6, exit
 	j print
 	
+preSpacing:		 # Sets up registers to be used in spacing
+	li $s0, 10 # Set s0 to 10 so we can divide numbers by it
+	li $s1, 1 # Set s1 to 1 so we can compare with slt
+	lw $t1, 0($t4) # set $t1 = current integer on the array
+	li $t0, 0 # Reset $t0, the counter
+check:
+	div $t1, $s0 # Divide
+	mflo $t1 # Get quotient, put it back in $t1
+	slt $t2, $t1, $s1 # If quotient is less than 1, set $t2 to true
+	addi $t0, $t0, 1 # Add to $t0, the counter
+	bne $t2, 0, Spacing # If $t2 != 0, which is to say if the quotient is in fact less than 1, jump to spacing
+	j check # loop
+
+Spacing:
+	beq $t0, 4, spaceReturn # If $t0 (which is the character count of the integer) is 4, skip
+	li $v0, 4
+	la $a0, space #Else, print space
+	syscall
 	
+	addi $t0, $t0, 1 #And increment $t0
+	j Spacing # Loop
+	
+frontSpacing:
+	li $t3, 0 # Reset register
+	add $t3, $t8, $t3 # Add the current row counter to $t3
+	sll $t3, $t3, 1 # Multiply it by 2
+	li $t5, 15 # Store 15
+	sub $t3, $t5, $t3 # Subtract $t3 from 15 (for determining number of initial spaces needed)
+
+frontSpacingLoop:
+	li $v0, 4 # Make a space
+	la $a0, space
+	syscall
+	
+	subi $t3, $t3, 1 # Subtract 1 from $t3
+	beq $t3, 0, fspaceReturn # When $t3 hits 0, all spaces are printed, return
+	j frontSpacingLoop # loop
