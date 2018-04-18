@@ -2,6 +2,7 @@
 # Create a string to separate the 28 numbers with a space
 numberArray: .word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 symbolArray: .word 0, 0, 0, 0, 0, 0, 0
+err: .asciiz "Incorrect!  Try again!\n"
 space: .asciiz " "
 bar: .asciiz "|"
 nA: .asciiz "!"
@@ -146,9 +147,9 @@ fspaceReturn:
 	beq $t6, 5, numB
 	beq $t6, 9, numC 
 	beq $t6, 13, numD
-	beq $t6, 18, numE
-	beq $t6, 22, numF
-	beq $t6, 26, numG
+	beq $t6, 19, numE
+	beq $t6, 20, numF
+	beq $t6, 23, numG
 	
 next:
 
@@ -307,8 +308,8 @@ numSpacing: 	# Spacing function for non-integers (all the symbols)
 	j spaceReturn
 
 play:		# Main play function, this is what drives user input
-	li $t6, 0 # Reset $t6
 	li $v0, 4 # Print prompt
+	li $t6, 0
 	la $a0, playPrompt
 	syscall
 
@@ -353,8 +354,76 @@ play:		# Main play function, this is what drives user input
 
 
 update:
+	beq $a1, 0, uA
+	beq $a1, 1, uB
+	beq $a1, 2, uC
+	beq $a1, 3, uD
+	beq $a1, 4, uE
+	beq $a1, 5, uF
+	beq $a1, 6, uG
+				
+uA:
+	la $t0, numberArray
+	addi $t0, $t0, 8
+	lw $t0, 0($t0)
+	lw $t1, userInt
+	beq $t1, $t0, postUpdate
+	j errorMsg
 	
+uB:
+	la $t0, numberArray
+	addi $t0, $t0, 20
+	lw $t0, 0($t0)
+	lw $t1, userInt
+	beq $t1, $t0, postUpdate
+	j errorMsg
+	
+uC:
+	la $t0, numberArray
+	addi $t0, $t0, 36
+	lw $t0, 0($t0)
+	lw $t1, userInt
+	beq $t1, $t0, postUpdate
+	j errorMsg
+	
+uD:
+	la $t0, numberArray
+	addi $t0, $t0, 52
+	lw $t0, 0($t0)
+	lw $t1, userInt
+	beq $t1, $t0, postUpdate
+	j errorMsg
+	
+uE:
+	la $t0, numberArray
+	addi $t0, $t0, 76
+	lw $t0, 0($t0)
+	lw $t1, userInt
+	beq $t1, $t0, postUpdate
+	j errorMsg
+	
+uF:
+	la $t0, numberArray
+	addi $t0, $t0, 80
+	lw $t0, 0($t0)
+	lw $t1, userInt
+	beq $t1, $t0, postUpdate
+	j errorMsg
+uG:
+	la $t0, numberArray
+	addi $t0, $t0, 92
+	lw $t0, 0($t0)
+	lw $t1, userInt
+	beq $t1, $t0, postUpdate
+	j errorMsg
 
+errorMsg:
+	li $v0, 4
+	la $a0, err
+	syscall
+	j play
+	
+postUpdate:
 	la $t0, symbolArray # Get address of symbol array
 	sll $a1, $a1, 2 # Multiply $a1 (index) by 4
 	add $t0, $t0, $a1 # Add 'em
