@@ -16,8 +16,9 @@ userString: .asciiz
 userInt: .word 0
 endline: .asciiz "\n"
 
-playPrompt: .asciiz "Please enter the symbol of the block you would like to guess: "
+playPrompt: .asciiz "\n\nPlease enter the symbol of the block you would like to guess: "
 playPrompt2: .asciiz "\nPlease enter the number you would like to guess: "
+endGamePrompt: .asciiz "\nCongratulations!  You won the game!"
 
 .text
 ##############################################################################
@@ -351,10 +352,12 @@ play:		# Main play function, this is what drives user input
 	li $a1, 6
 	beq $a0, $s6, update
 	
+	j errorMsg
+	
 
 
 update:
-	beq $a1, 0, uA
+	beq $a1, 0, uA # Branch based on flag set
 	beq $a1, 1, uB
 	beq $a1, 2, uC
 	beq $a1, 3, uD
@@ -363,16 +366,16 @@ update:
 	beq $a1, 6, uG
 				
 uA:
-	la $t0, numberArray
-	addi $t0, $t0, 114
-	lw $t0, 0($t0)
-	lw $t1, userInt
-	beq $t1, $t0, postUpdate
+	la $t0, numberArray # Store address of numberArray in $t0
+	addi $t0, $t0, 104 # Add 104 to access appropriate index
+	lw $t0, 0($t0) # Pull value and keep it for comparison 
+	lw $t1, userInt # Pull userInt and put it up for comparison
+	beq $t1, $t0, postUpdate # Compare them
 	j errorMsg
 	
 uB:
 	la $t0, numberArray
-	addi $t0, $t0, 102
+	addi $t0, $t0, 92
 	lw $t0, 0($t0)
 	lw $t1, userInt
 	beq $t1, $t0, postUpdate
@@ -380,7 +383,7 @@ uB:
 	
 uC:
 	la $t0, numberArray
-	addi $t0, $t0, 86
+	addi $t0, $t0, 76
 	lw $t0, 0($t0)
 	lw $t1, userInt
 	beq $t1, $t0, postUpdate
@@ -388,7 +391,7 @@ uC:
 	
 uD:
 	la $t0, numberArray
-	addi $t0, $t0, 70
+	addi $t0, $t0, 60
 	lw $t0, 0($t0)
 	lw $t1, userInt
 	beq $t1, $t0, postUpdate
@@ -417,7 +420,7 @@ uG:
 	beq $t1, $t0, postUpdate
 	j errorMsg
 
-errorMsg:
+errorMsg: # Standard error message
 	li $v0, 4
 	la $a0, err
 	syscall
@@ -430,4 +433,36 @@ postUpdate:
 	li $t1, 1 # Set $t1 to 1
 	sw $t1, 0($t0) # Store in the symbolArray as having been hit by the user
 	
+	jal preCheckForWin
+	
 	j prePrint
+
+preCheckForWin: # Setting up necessary variables
+	la $t0, symbolArray
+	li $t1, 1
+	
+checkForWin:
+	lw $t2, 0($t0) # load values from symbol array, if all are == 1, end the game
+	bne $t2, $t1, prePrint
+	lw $t2, 4($t0)
+	bne $t2, $t1, prePrint
+	lw $t2, 8($t0)
+	bne $t2, $t1, prePrint
+	lw $t2, 12($t0)
+	bne $t2, $t1, prePrint
+	lw $t2, 16($t0)
+	bne $t2, $t1, prePrint
+	lw $t2, 20($t0)
+	bne $t2, $t1, prePrint
+	lw $t2, 24($t0)
+	bne $t2, $t1, prePrint
+	
+	j endGame
+	
+endGame:
+	li $v0, 4 # end game and exit
+	la $a0, endGamePrompt
+	syscall
+	li $v0, 10
+	syscall
+	
