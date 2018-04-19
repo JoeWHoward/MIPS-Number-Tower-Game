@@ -364,7 +364,7 @@ update:
 				
 uA:
 	la $t0, numberArray
-	addi $t0, $t0, 8
+	addi $t0, $t0, 114
 	lw $t0, 0($t0)
 	lw $t1, userInt
 	beq $t1, $t0, postUpdate
@@ -372,7 +372,7 @@ uA:
 	
 uB:
 	la $t0, numberArray
-	addi $t0, $t0, 20
+	addi $t0, $t0, 102
 	lw $t0, 0($t0)
 	lw $t1, userInt
 	beq $t1, $t0, postUpdate
@@ -380,7 +380,7 @@ uB:
 	
 uC:
 	la $t0, numberArray
-	addi $t0, $t0, 36
+	addi $t0, $t0, 86
 	lw $t0, 0($t0)
 	lw $t1, userInt
 	beq $t1, $t0, postUpdate
@@ -388,7 +388,7 @@ uC:
 	
 uD:
 	la $t0, numberArray
-	addi $t0, $t0, 52
+	addi $t0, $t0, 70
 	lw $t0, 0($t0)
 	lw $t1, userInt
 	beq $t1, $t0, postUpdate
@@ -396,7 +396,7 @@ uD:
 	
 uE:
 	la $t0, numberArray
-	addi $t0, $t0, 76
+	addi $t0, $t0, 36
 	lw $t0, 0($t0)
 	lw $t1, userInt
 	beq $t1, $t0, postUpdate
@@ -404,14 +404,14 @@ uE:
 	
 uF:
 	la $t0, numberArray
-	addi $t0, $t0, 80
+	addi $t0, $t0, 32
 	lw $t0, 0($t0)
 	lw $t1, userInt
 	beq $t1, $t0, postUpdate
 	j errorMsg
 uG:
 	la $t0, numberArray
-	addi $t0, $t0, 92
+	addi $t0, $t0, 20
 	lw $t0, 0($t0)
 	lw $t1, userInt
 	beq $t1, $t0, postUpdate
@@ -421,7 +421,7 @@ errorMsg:
 	li $v0, 4
 	la $a0, err
 	syscall
-	j play
+	j prePrint
 	
 postUpdate:
 	la $t0, symbolArray # Get address of symbol array
