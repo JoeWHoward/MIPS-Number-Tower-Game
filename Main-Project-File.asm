@@ -21,9 +21,9 @@ playPrompt2: .asciiz "\nPlease enter the number you would like to guess: "
 endGamePrompt: .asciiz "\nCongratulations!  You won the game!"
 
 .text
-##############################################################################
-# Don't touch the code from HERE
-##############################################################################
+##################################
+# Don't touch the code from HERE #
+##################################
 
 # get the time
 	li	$v0, 30		# get time in milliseconds (as a 64-bit value)
@@ -424,6 +424,14 @@ errorMsg: # Standard error message
 	li $v0, 4
 	la $a0, err
 	syscall
+	
+	li $v0, 31
+	li $a0, 55 # Failure
+	li $a1, 200
+	li $a2 9
+	li $a3, 150
+	syscall
+	
 	j prePrint
 	
 postUpdate:
@@ -432,6 +440,21 @@ postUpdate:
 	add $t0, $t0, $a1 # Add 'em
 	li $t1, 1 # Set $t1 to 1
 	sw $t1, 0($t0) # Store in the symbolArray as having been hit by the user
+	
+	li $v0, 31
+	li $a0, 95 # Success
+	li $a1, 200
+	li $a2 9
+	li $a3, 150
+	syscall
+	li $v0, 32
+	li $a0, 150
+	syscall
+	li $v0, 31
+	li $a0, 101
+	li $a2, 9
+	li $a3, 2500
+	syscall
 	
 	jal preCheckForWin
 	
@@ -465,4 +488,3 @@ endGame:
 	syscall
 	li $v0, 10
 	syscall
-	
